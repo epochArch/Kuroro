@@ -1,2 +1,2 @@
 # kuroro
-a distributed message middleware
+A distributed message middleware
