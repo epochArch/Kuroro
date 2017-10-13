@@ -1,2 +1,2 @@
-# kuroro
+# Kuroro
 A distributed message middleware
