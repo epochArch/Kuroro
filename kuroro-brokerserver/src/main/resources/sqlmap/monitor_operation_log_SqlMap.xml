@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="monitor_operation_log">
+  <resultMap type="com.epocharch.kuroro.monitor.log.aop.OperationLog"
+    id="abatorgenerated_OperationLogResult">
+    <result column="ID" jdbcType="INTEGER" property="id"/>
+    <result column="ZONE_NAME" jdbcType="VARCHAR" property="idcName"/>
+    <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+    <result column="IP" jdbcType="VARCHAR" property="ip"/>
+    <result column="MODULE_NAME" jdbcType="VARCHAR" property="moduleName"/>
+    <result column="OPERATION_NAME" jdbcType="VARCHAR" property="operationName"/>
+    <result column="OPERATION_TIME" property="operationTime"/>
+    <result column="OPERATION_DETAILS" property="operationDetails"/>
+    <result column="RESULT_CODE" jdbcType="VARCHAR" property="resultCode"/>
+  </resultMap>
+  <!--insert the log-->
+  <insert id="monitor_operation_log.insert"
+    parameterType="com.epocharch.kuroro.monitor.log.aop.OperationLog">
+    insert into
+    monitor_operation_log(ID,ZONE_NAME,USER_NAME,IP,MODULE_NAME,OPERATION_NAME,OPERATION_TIME,OPERATION_DETAILS,RESULT_CODE)
+    values(#{id}, #{idcName}, #{userName} ,#{ip}, #{moduleName}, #{operationName},
+    #{operationTime}, #{operationDetails}, #{resultCode})
+  </insert>
+  <!--get the count of logs -->
+  <select id="monitor_operation_log.getLogPageCount" parameterType="com.epocharch.kuroro.monitor.log.aop.OperationLog"
+    resultType="int">
+    select count(ID)
+    from monitor_operation_log
+    where <![CDATA[OPERATION_TIME > #{operationTimeStart}]]> and
+    <![CDATA[OPERATION_TIME < #{operationTimeEnd}]]>
+    <if test="userName != null and userName != '' ">
+      AND userName  LIKE #{userName}
+    </if>
+    <if test="zoneName != null and zoneName != '' ">
+      AND zoneName LIKE #{zoneName}
+    </if>
+    <!-- order by OPERATION_TIME desc -->
+  </select>
+  <!-- get the page of all logs-->
+  <select id="monitor_operation_log.getLogForPage" parameterType="com.epocharch.kuroro.monitor.log.aop.OperationLog"
+    resultMap="abatorgenerated_OperationLogResult">
+    select ID, ZONE_NAME,USER_NAME, IP, MODULE_NAME,OPERATION_NAME,
+    OPERATION_TIME,OPERATION_DETAILS,RESULT_CODE
+    from
+    monitor_operation_log
+    where <![CDATA[OPERATION_TIME > #{operationTimeStart}]]> and
+    <![CDATA[OPERATION_TIME < {operationTimeEnd}]]>
+    <if test="userName != null and userName != '' ">
+      AND userName LIKE #{userName}
+    </if>
+    <if test="zoneName != null and zoneName != '' ">
+      AND zoneName LIKE #{zoneName}
+    </if>
+    order by OPERATION_TIME desc limit #{start}, #{size}
+  </select>
+</mapper>

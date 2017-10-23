@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  default-autowire="byName"
+  xmlns="http://www.springframework.org/schema/beans"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+  <!-- Jmx Register -->
+  <bean class="org.springframework.jmx.export.MBeanExporter" id="mbeanExporter">
+    <property name="server" ref="mbeanServer"></property>
+    <property name="assembler">
+      <bean class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler"
+        id="assembler">
+        <property name="attributeSource">
+          <bean class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"
+            id="attributeSource"/>
+        </property>
+      </bean>
+    </property>
+  </bean>
+  <bean class="org.springframework.jmx.support.MBeanServerFactoryBean" id="mbeanServer">
+    <property name="defaultDomain" value="com.epocharch.kuroro"></property>
+    <property name="locateExistingServerIfPossible" value="true"></property>
+  </bean>
+  <bean class="com.epocharch.kuroro.common.jmx.support.JmxSpringUtil" id="jmxSpringUtil">
+    <property name="mbeanExporter" ref="mbeanExporter"></property>
+  </bean>
+
+  <bean class="com.epocharch.kuroro.common.inner.dao.impl.mongodb.NewMongoClient"
+    id="newMongoClient">
+    <property name="jmxSpringUtil" ref="jmxSpringUtil"/>
+  </bean>
+
+  <bean class="com.epocharch.kuroro.common.inner.dao.impl.mongodb.AckDAOImpl" id="ackDAO" depends-on="newMongoClient"></bean>
+  <bean class="com.epocharch.kuroro.common.inner.dao.impl.mongodb.MessageDAOImpl"
+    id="messageDAO" depends-on="newMongoClient"></bean>
+  <bean class="com.epocharch.kuroro.common.inner.dao.impl.mongodb.CompensationDaoImpl"
+    id="compensationDao" depends-on="newMongoClient"></bean>
+
+  <bean class="com.epocharch.kuroro.broker.utils.MessageCountUtil" id="messageCountUtil"></bean>
+
+  <!-- monitor add -->
+  <import resource="applicationContext-monitor.xml"/>
+</beans>

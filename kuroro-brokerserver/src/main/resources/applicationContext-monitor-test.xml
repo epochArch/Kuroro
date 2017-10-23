@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  default-autowire="byName"
+  xmlns="http://www.springframework.org/schema/beans"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <bean class="com.epocharch.kuroro.common.inner.util.LoadPropertyConfigurer"
+    id="propertyConfigurer">
+    <property name="poolId">
+      <value>epocharch/kuroro</value>
+    </property>
+    <property name="locations">
+      <list>
+        <value>classpath:db/kuroro.monitor.jdbc-memo.properties</value>
+        <value>classpath:db/kuroro.monitor.jdbc-analysis.properties</value>
+      </list>
+    </property>
+  </bean>
+
+
+  <bean id="jdbcDataSource"
+    class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="url" value="jdbc:mysql://192.168.18.30:3306/kuroro_dev" />
+    <property name="username" value="${jdbc.analyse_username}" />
+    <property name="password" value="${jdbc.analyse_password}" />
+  </bean>
+
+  <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+    id="baseTransactionManager">
+    <property name="dataSource">
+      <ref bean="jdbcDataSource"/>
+    </property>
+  </bean>
+
+  <bean class="org.springframework.transaction.interceptor.TransactionInterceptor"
+    id="soaTransactionInterceptor">
+    <property name="transactionManager" ref="baseTransactionManager"/>
+    <property name="transactionAttributes">
+      <props>
+        <prop key="*">readOnly</prop>
+        <prop key="*insert*">PROPAGATION_REQUIRED,-Exception</prop>
+        <prop key="add*">PROPAGATION_REQUIRED,-Exception</prop>
+        <prop key="save*">PROPAGATION_REQUIRED,-Exception</prop>
+        <prop key="modify*">PROPAGATION_REQUIRED,-Exception</prop>
+        <prop key="update*">PROPAGATION_REQUIRED,-Exception</prop>
+        <prop key="delete*">PROPAGATION_REQUIRED,-Exception</prop>
+        <prop key="remove*">PROPAGATION_REQUIRED,-Exception</prop>
+        <prop key="query*">PROPAGATION_REQUIRED, readOnly,-Exception</prop>
+        <prop key="get*">PROPAGATION_REQUIRED, readOnly,-Exception</prop>
+        <prop key="load*">PROPAGATION_REQUIRED, -Exception</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="sqlAnalyseSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="jdbcDataSource" />
+    <property name="configLocation" value="classpath:mybatis-anlaysis-config.xml"></property>
+  </bean>
+
+  <bean id="sqlAnalyseSession" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg index="0" ref="sqlAnalyseSessionFactory" />
+  </bean>
+
+  <bean class="com.epocharch.kuroro.monitor.dao.impl.BaseMybatisDAOImpl" id="analyseMyIbaitsDAO">
+    <property name="sqlSession" ref="sqlAnalyseSession"/>
+  </bean>
+
+</beans>

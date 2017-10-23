@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="RoleDao">
+
+  <select id="queryById" parameterType="int" resultType="Role">
+    SELECT * FROM hdc_role WHERE id=#{id}
+  </select>
+
+  <select id="getAllRoles" resultType="HashMap">
+    SELECT * FROM hdc_role
+  </select>
+
+  <select id="getRoleNum" resultType="int">
+    SELECT count(1) FROM hdc_role
+  </select>
+
+  <select id="getCountByRoleCode" parameterType="java.lang.String" resultType="int">
+    SELECT count(1) FROM hdc_role where roleCode=#{roleCode}
+  </select>
+
+  <select id="getRoleList" resultType="Role">
+    SELECT * FROM hdc_role LIMIT #{offset}, #{pagesize}
+  </select>
+
+  <select id="getRoleAssociationList" resultType="RoleAssociation">
+    SELECT * FROM hdc_pvg WHERE roleId=#{roleId} and associationType=#{pvgType}
+  </select>
+
+  <select id="getRoleByCode" parameterType="java.lang.String" resultType="Role">
+    SELECT * FROM hdc_role WHERE roleCode=#{roleCode}
+  </select>
+
+
+  <select id="getUserRoleCodesByUid" parameterType="long" resultType="String">
+    SELECT roleCodes FROM hdc_user_role WHERE uid=#{uid}
+  </select>
+
+  <insert id="saveRole" parameterType="com.epocharch.kuroro.monitor.dto.Role">
+    INSERT INTO hdc_role (roleCode,roleName,appName) VALUES(#{roleCode},#{roleName},#{appName})
+  </insert>
+
+  <delete id="delRole">
+    DELETE FROM hdc_role WHERE roleCode in
+    <foreach item="item" index="index" collection="list"
+      open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </delete>
+
+  <update id="updateById" parameterType="com.epocharch.kuroro.monitor.dto.Role">
+    UPDATE hdc_role
+    <set>
+      <if test="roleCode != null and roleCode != '' ">roleCode=#{roleCode}</if>
+      <if test="roleName != null and roleName != '' ">roleName=#{roleName}</if>
+      <if test="appName != null and appName != '' " >appName=#{appName}</if>
+    </set>
+    WHERE id=#{id}
+  </update>
+
+  <delete id="deleteById" parameterType="int">
+    DELETE FROM hdc_role WHERE id=#{id}
+  </delete>
+
+  <delete id="clearPvg" parameterType="HashMap">
+    DELETE FROM hdc_pvg WHERE roleId=#{roleId} and associationType=#{pvgType}
+  </delete>
+
+  <delete id="delRolePvg" parameterType="int">
+    DELETE FROM hdc_pvg WHERE roleId=#{roleId}
+  </delete>
+
+  <insert id="addRolePvg" parameterType="HashMap">
+    INSERT INTO hdc_pvg (roleId,associationId,associationType) VALUES(#{roleId}, #{pvgId}, #{pvgType})
+  </insert>
+
+  <select id="getRoleIdsByRoleCodes" parameterType="java.util.List" resultType="int">
+    SELECT id FROM hdc_role WHERE roleCode IN
+    <foreach item="item" index="index" collection="list"
+      open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="getPvgByRoleIds" parameterType="java.util.List" resultType="menuDO">
+    SELECT id,pid,code,name,url FROM hdc_menu WHERE id IN
+    <foreach item="item" index="index" collection="list"
+      open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    and app =
+    'kuroro' order by id
+  </select>
+
+  <select id="getAssociationId" parameterType="int" resultType="int">
+    SELECT associationId FROM hdc_pvg WHERE roleId=#{roleId}
+  </select>
+
+</mapper>

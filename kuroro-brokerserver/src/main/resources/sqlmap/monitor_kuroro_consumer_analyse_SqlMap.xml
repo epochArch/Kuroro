@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="monitor_kuroro_consumer_analyse">
+  <resultMap type="com.epocharch.kuroro.monitor.dto.KuroroConsumerAnalyse"
+    id="abatorgenerated_KuroroConsumerAnalyseResult">
+    <result column="Id" jdbcType="INTEGER" property="id"/>
+    <result column="TOPIC_NAME" jdbcType="VARCHAR" property="topicName"/>
+    <result column="BROKER" jdbcType="VARCHAR" property="broker"/>
+    <result column="OUT_COUNTS" jdbcType="INTEGER" property="outCounts"/>
+    <result column="CONSUMER_NAME" jdbcType="VARCHAR" property="consumerName"/>
+    <result column="CONSUMER_IP" jdbcType="VARCHAR" property="consumerIp"/>
+    <result column="CONN_PORT" jdbcType="INTEGER" property="connPort"/>
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime"/>
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime"/>
+    <result column="MEMO" jdbcType="VARCHAR" property="memo"/>
+    <result column="ZONE" jdbcType="VARCHAR" property="zone"/>
+  </resultMap>
+  <select id="getOutMins" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select start_time, sum(out_counts) outCounts from monitor_kuroro_consumer_analyse
+    where topic_name = #{topicName}
+    <if test="broker != null and broker != ''">
+     AND BROKER = #{broker}
+    </if>
+    <if test="consumerIp != null and consumerIp != '' ">
+     AND CONSUMER_IP = #{consumerIp}
+    </if>
+    <if test="consumerName != null and consumerName != '' ">
+     AND CONSUMER_NAME = #{consumerName}
+    </if>
+    <if test="zone != null and zone != '' ">
+     AND ZONE = #{zone}
+    </if>
+    group by start_time
+  </select>
+
+  <delete id="deleteById"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroConsumerAnalyse">
+    delete from monitor_kuroro_consumer_analyse
+    where Id = #{id}
+  </delete>
+
+
+  <delete id="deleteOld" parameterType="java.util.Date">
+    delete from monitor_kuroro_consumer_analyse
+    where <![CDATA[START_TIME <= #{startDate} ]]>
+  </delete>
+
+  <select id="fetchMergeData"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultMap="abatorgenerated_KuroroConsumerAnalyseResult">
+    select Id,TOPIC_NAME, BROKER, OUT_COUNTS, CONSUMER_NAME, CONSUMER_IP, CONN_PORT, START_TIME,
+    END_TIME, MEMO, ZONE
+    from monitor_kuroro_consumer_analyse
+    where <![CDATA[START_TIME >= #{startTime}  and END_TIME < #{endTime}]]>  and
+    topic_name =#{topicName}
+  </select>
+
+  <select id="getTodayCounts" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select topic_name,sum(OUT_COUNTS) sumCounts
+    from monitor_kuroro_consumer_analyse
+    where <![CDATA[START_TIME >= #{startTime}  and START_TIME < #{endTime}]]>
+    group by topic_name
+  </select>
+
+  <select id="getComboxInfo" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select distinct TOPIC_NAME,BROKER,CONSUMER_NAME,CONSUMER_IP,CONN_PORT
+    from monitor_kuroro_consumer_analyse
+    where <![CDATA[START_TIME >= #{startTime}]]>
+  </select>
+
+  <insert id="insert"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroConsumerAnalyse">
+    insert into monitor_kuroro_consumer_analyse (TOPIC_NAME, BROKER, OUT_COUNTS, CONSUMER_NAME,
+    CONSUMER_IP, CONN_PORT, START_TIME, END_TIME, MEMO, ZONE )
+    values (#{topicName}, #{broker}, #{outCounts},
+    #{consumerName}, #{consumerIp}, #{connPort}, #{startTime},
+    #{endTime}, #{memo}, #{zone})
+  </insert>
+
+
+  <select id="getHisData" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select start_time, sum(out_counts) outCounts from monitor_kuroro_consumer_analyse
+    where   <![CDATA[START_TIME > #{startTime}]]> and
+    <![CDATA[START_TIME < #{endTime}]]>
+    and topic_name = #{topicName}
+    <if test="broker != null and broker != '' ">
+      AND BROKER = #{broker}
+    </if>
+    <if test="consumerIp != null and consumerIp != '' ">
+      AND CONSUMER_IP = #{consumerIp}
+    </if>
+    <if test="consumerName != null and consumerName != '' ">
+      AND CONSUMER_NAME = #{consumerName}
+    </if>
+    group by start_time
+  </select>
+</mapper>

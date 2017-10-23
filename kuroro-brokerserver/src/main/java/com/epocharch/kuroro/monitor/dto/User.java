@@ -1,0 +1,70 @@
+/*
+ * Copyright 2017 EpochArch.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.epocharch.kuroro.monitor.dto;
+
+import java.io.Serializable;
+
+public class User implements Serializable {
+
+  private static final long serialVersionUID = -7858466822110757726L;
+  private long id;
+  private String name;
+  private String roleCodes;
+  private String roleIds;
+
+  public User() {
+    super();
+  }
+
+  public User(String name) {
+    super();
+    this.name = name;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getRoleCodes() {
+    return roleCodes;
+  }
+
+  public void setRoleCodes(String roleCodes) {
+    this.roleCodes = roleCodes;
+  }
+
+  public String getRoleIds() {
+    return roleIds;
+  }
+
+  public void setRoleIds(String roleIds) {
+    this.roleIds = roleIds;
+  }
+
+}

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="monitor_kuroro_consumer_analyse_hour">
+  <resultMap type="com.epocharch.kuroro.monitor.dto.KuroroConsumerAnalyse"
+    id="abatorgenerated_KuroroConsumerAnalyseResult">
+    <result column="Id" jdbcType="INTEGER" property="id"/>
+    <result column="TOPIC_NAME" jdbcType="VARCHAR" property="topicName"/>
+    <result column="BROKER" jdbcType="VARCHAR" property="broker"/>
+    <result column="OUT_COUNTS" jdbcType="INTEGER" property="outCounts"/>
+    <result column="CONSUMER_NAME" jdbcType="VARCHAR" property="consumerName"/>
+    <result column="CONSUMER_IP" jdbcType="VARCHAR" property="consumerIp"/>
+    <result column="CONN_PORT" jdbcType="INTEGER" property="connPort"/>
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime"/>
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime"/>
+    <result column="MEMO" jdbcType="VARCHAR" property="memo"/>
+    <result column="ZONE" jdbcType="VARCHAR" property="zone"/>
+  </resultMap>
+  <select id="monitor_kuroro_consumer_analyse_hour.getById"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroConsumerAnalyse"
+    resultMap="abatorgenerated_KuroroConsumerAnalyseResult">
+    select Id, TOPIC_NAME, BROKER, OUT_COUNTS, CONSUMER_NAME, CONSUMER_IP, CONN_PORT, START_TIME,
+    END_TIME, MEMO, ZONE
+    from monitor_kuroro_consumer_analyse_hour
+    where Id = #{id}
+  </select>
+
+  <select id="monitor_kuroro_consumer_analyse_hour.checkMerged" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="int">
+    select count(Id)
+    from monitor_kuroro_consumer_analyse_hour
+    where <![CDATA[START_TIME >= #{startTime}  and START_TIME < #{endTime}]]>  and
+    topic_name = #{topicName}
+  </select>
+
+  <select id="monitor_kuroro_consumer_analyse_hour.getComboxInfo" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select distinct TOPIC_NAME,BROKER,CONSUMER_NAME,CONSUMER_IP,CONN_PORT
+    from monitor_kuroro_consumer_analyse_hour
+    where <![CDATA[START_TIME >= #{startTime}]]>
+  </select>
+
+  <select id="monitor_kuroro_consumer_analyse_hour.getTodayCounts" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select topic_name,sum(IN_COUNTS) sumCounts
+    from monitor_kuroro_consumer_analyse_hour
+    where <![CDATA[START_TIME >= #{startTime}  and START_TIME < #{endTime}]]>
+    group by topic_name
+  </select>
+
+  <delete id="monitor_kuroro_consumer_analyse_hour.deleteById"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroConsumerAnalyse">
+    delete from monitor_kuroro_consumer_analyse_hour
+    where Id = #{id}
+  </delete>
+  <insert id="monitor_kuroro_consumer_analyse_hour.insert"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroConsumerAnalyse">
+    insert into monitor_kuroro_consumer_analyse_hour (Id, TOPIC_NAME, BROKER, OUT_COUNTS,
+    CONSUMER_NAME, CONSUMER_IP, CONN_PORT, START_TIME, END_TIME, MEMO, ZONE )
+    values (#{id}, #{topicName}, #{broker}, #{outCounts},
+    #{consumerName}, #{consumerIp}, #{connPort}, #{startTime},
+    #{endTime}, #{memo}, #{zone})
+  </insert>
+  <select id="monitor_kuroro_consumer_analyse_hour.selectKuroroDaySum"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select sum(OUT_COUNTS) sumCounts, topic_name, consumer_name FROM
+    monitor_kuroro_consumer_analyse_hour
+    where <![CDATA[START_TIME >= #{startTime}  and START_TIME < #{endTime}]]>
+    group by consumer_name, topic_name order by sumCounts DESC;
+  </select>
+  <select id="monitor_kuroro_consumer_analyse_hour.fetchMergeData"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="abatorgenerated_KuroroConsumerAnalyseResult">
+    select Id,TOPIC_NAME, BROKER, OUT_COUNTS, CONSUMER_NAME, CONSUMER_IP, CONN_PORT, START_TIME,
+    END_TIME, MEMO, ZONE
+    from monitor_kuroro_consumer_analyse_hour
+    where <![CDATA[START_TIME >= #{startTime}  and END_TIME < #{endTime}]]>
+  </select>
+</mapper>

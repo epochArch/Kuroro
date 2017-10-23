@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  default-autowire="byName"
+  xmlns="http://www.springframework.org/schema/beans"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+  <bean class="com.epocharch.kuroro.broker.leaderserver.Compensator" id="compensator"></bean>
+  <bean class="com.epocharch.kuroro.broker.leaderserver.LeaderServer"
+    id="leaderServer" init-method="start">
+  </bean>
+  <bean class="com.epocharch.kuroro.broker.leaderserver.LeaderWorkerManager"
+    id="leaderWorkerManager"
+    init-method="init"></bean>
+</beans>

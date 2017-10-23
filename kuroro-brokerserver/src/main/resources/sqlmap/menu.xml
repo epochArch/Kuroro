@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="MenuDao">
+
+  <select id="getFirstMenus" resultType="java.util.HashMap">
+    SELECT * FROM hdc_menu WHERE pid=0
+  </select>
+
+  <select id="getSubMenus" parameterType="int" resultType="HashMap">
+    SELECT * FROM hdc_menu WHERE pid=#{pid}
+  </select>
+
+  <select id="getAllMenus" resultType="menu">
+    SELECT * FROM hdc_menu where app = 'kuroro' order by id;
+  </select>
+
+  <select id="getMenuPids" parameterType="java.util.List" resultType="int">
+    SELECT DISTINCT pid FROM hdc_menu WHERE id IN
+    <foreach item="item" index="index" collection="list"
+      open="(" separator="," close=")">
+      #{item}
+    </foreach>  AND pid>0
+  </select>
+
+  <insert id="addMenu" parameterType="menu">
+    insert into hdc_menu(pid,code,name,url,app) values(#{pid},#{code},#{name},#{url},#{app})
+  </insert>
+
+  <select id="getMenuNum" resultType="int">
+    select count(1) from hdc_menu where app = 'kuroro' and pid =0
+  </select>
+
+  <select id="getParentMenuByPage" resultType="menuManageVO">
+    SELECT * FROM hdc_menu where app = 'kuroro' and pid =0 LIMIT #{offset},#{pagesize}
+  </select>
+
+  <select id="getParentMenus" resultType="menuManageVO">
+    SELECT * FROM hdc_menu where app = 'kuroro' and pid =0
+  </select>
+
+
+  <select id="getSubMenusByPids" parameterType="java.util.List" resultType="menuManageVO">
+    SELECT * FROM hdc_menu where app = 'kuroro' and pid in
+    <foreach item="item" index="index" collection="list"
+      open="(" separator="," close=")">
+      #{item}
+    </foreach>
+  </select>
+
+  <select id="getMenuById" parameterType="int" resultType="menu">
+    SELECT * FROM hdc_menu where id = #{id} and app = 'kuroro'
+  </select>
+
+  <update id="updateMenu" parameterType="menu">
+    update hdc_menu set pid = #{pid},name = #{name}, code=#{code},url=#{url},app = 'kuroro' where id =
+    #{id}
+  </update>
+
+  <delete id="deleteById" parameterType="int">
+    delete from hdc_menu where id = #{id}
+  </delete>
+</mapper>

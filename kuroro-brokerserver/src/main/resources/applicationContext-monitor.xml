@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  default-autowire="byName"
+  xmlns="http://www.springframework.org/schema/beans"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+  <import resource="spring-user-analysis.xml"/>
+  <import resource="spring-userAuth.xml"/>
+  <import resource="spring-analysis-memo.xml"/>
+
+  <bean class="com.epocharch.kuroro.common.inner.util.LoadPropertyConfigurer"
+    id="propertyConfigurer">
+    <property name="poolId">
+      <value>epocharch/kuroro</value>
+    </property>
+    <property name="locations">
+      <list>
+        <value>classpath:db/kuroro.monitor.jdbc-analysis.properties</value>
+        <value>classpath:db/kuroro.monitor.jdbc-memo.properties</value>
+      </list>
+    </property>
+  </bean>
+
+  <!-- 启用AspectJ对Annotation的支持 -->
+  <aop:aspectj-autoproxy/>
+  <bean class="com.epocharch.kuroro.monitor.log.aop.OperationLogAspect" id="operationLogAspect"/>
+  <bean class="com.epocharch.kuroro.monitor.log.aop.OperationLogService" id="operationLogService"/>
+
+  <bean class="com.epocharch.kuroro.monitor.intelligent.impl.AnalystService" id="analystService">
+  </bean>
+  <bean class="com.epocharch.kuroro.monitor.plugin.KuroroInfoAnalysePlugin"
+    id="kuroroInfoAnalysePlugin"/>
+  <bean class="com.epocharch.kuroro.monitor.plugin.handler.KuroroResultHandler"
+    id="kuroroResultHandler">
+    <property name="analyseMyIbaitsDAO" ref="analyseMyIbaitsDAO"></property>
+    <property name="memoMyIbaitsDAO" ref="memoMyIbaitsDAO"></property>
+  </bean>
+  <bean class="com.epocharch.kuroro.monitor.intelligent.impl.AnalystJobService"
+    id="analystJobService">
+    <property name="memoMyIbaitsDAO" ref="memoMyIbaitsDAO"/>
+    <property name="analyseMyIbaitsDAO" ref="analyseMyIbaitsDAO"/>
+    <property name="kuroroAnalystService" ref="kuroroAnalystService"/>
+    <property name="handlerMap">
+      <map>
+        <entry key="com.epocharch.kuroro.monitor.plugin.KuroroInfoAnalysePlugin">
+          <ref bean="kuroroResultHandler"/>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <bean class="com.epocharch.kuroro.monitor.service.impl.KuroroServiceImpl" id="kuroroService">
+    <property name="analyseMyIbaitsDAO" ref="analyseMyIbaitsDAO"></property>
+  </bean>
+  <bean class="com.epocharch.kuroro.monitor.intelligent.impl.KuroroAnalystService"
+    id="kuroroAnalystService">
+    <property name="memoMyIbaitsDAO" ref="memoMyIbaitsDAO"></property>
+    <property name="analyseMyIbaitsDAO" ref="analyseMyIbaitsDAO"></property>
+  </bean>
+
+  <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+    <property name="beanNames">
+      <list>
+        <value>com.epocharch.kuroro.monitor.*.*Service</value>
+      </list>
+    </property>
+    <property name="interceptorNames">
+      <list>
+        <value>soaTransactionInterceptor</value>
+        <value>analysisTransactionInterceptor</value>
+        <value>authTransactionInterceptor</value>
+        <value>memoTransactionInterceptor</value>
+      </list>
+    </property>
+  </bean>
+</beans>

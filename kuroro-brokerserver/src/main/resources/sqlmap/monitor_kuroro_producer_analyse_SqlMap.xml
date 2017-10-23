@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="monitor_kuroro_producer_analyse">
+  <resultMap type="com.epocharch.kuroro.monitor.dto.KuroroProducerAnalyse"
+    id="abatorgenerated_KuroroProducerAnalyseResult">
+    <result column="Id" jdbcType="INTEGER" property="id"/>
+    <result column="TOPIC_NAME" jdbcType="VARCHAR" property="topicName"/>
+    <result column="BROKER" jdbcType="VARCHAR" property="broker"/>
+    <result column="IN_COUNTS" jdbcType="INTEGER" property="inCounts"/>
+    <result column="START_TIME" jdbcType="TIMESTAMP" property="startTime"/>
+    <result column="END_TIME" jdbcType="TIMESTAMP" property="endTime"/>
+    <result column="MEMO" jdbcType="VARCHAR" property="memo"/>
+    <result column="ZONE" jdbcType="VARCHAR" property="zone"/>
+  </resultMap>
+  <select id="monitor_kuroro_producer_analyse.getById"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroProducerAnalyse"
+    resultMap="abatorgenerated_KuroroProducerAnalyseResult">
+    select Id, TOPIC_NAME, BROKER, IN_COUNTS, START_TIME, END_TIME, MEMO, ZONE
+    from monitor_kuroro_producer_analyse
+    where Id = #{id}
+  </select>
+
+  <select id="monitor_kuroro_producer_analyse.getTopicNames" parameterType="java.util.Date"
+    resultType="string">
+    select distinct topic_name from monitor_kuroro_producer_analyse
+    where <![CDATA[START_TIME >= #{startTime} and  start_time <=now() ]]>
+  </select>
+
+  <select id="monitor_kuroro_producer_analyse.fetchMergeData"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultMap="abatorgenerated_KuroroProducerAnalyseResult">
+    select Id,TOPIC_NAME, BROKER, IN_COUNTS, START_TIME, END_TIME, MEMO, ZONE
+    from monitor_kuroro_producer_analyse
+    where <![CDATA[START_TIME >= #{startTime}  and START_TIME < #{endTime}]]>  and
+    topic_name = #{topicName}
+  </select>
+
+  <select id="monitor_kuroro_producer_analyse.getInMins" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select start_time, sum(in_counts) inCounts from monitor_kuroro_producer_analyse
+    where topic_name = #{topicName}
+    <if test="broker != null and broker != '' ">
+      AND BROKER = #{broker}
+    </if>
+    <if test="zone != null and zone != '' ">
+      AND ZONE = #{zone}
+    </if>
+    group by start_time
+  </select>
+  <delete id="monitor_kuroro_producer_analyse.deleteOld" parameterType="java.util.Date">
+    delete from monitor_kuroro_producer_analyse
+    where <![CDATA[START_TIME <= #{startTime} ]]>
+  </delete>
+
+  <select id="monitor_kuroro_producer_analyse.getTodayCounts" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select topic_name,sum(IN_COUNTS) sumCounts
+    from monitor_kuroro_producer_analyse
+    where <![CDATA[START_TIME >= #{startTime}  and START_TIME < #{endTime}]]>
+    group by topic_name
+  </select>
+
+
+  <insert id="monitor_kuroro_producer_analyse.insert"
+    parameterType="com.epocharch.kuroro.monitor.dto.KuroroProducerAnalyse">
+    insert into monitor_kuroro_producer_analyse (Id, TOPIC_NAME, BROKER, IN_COUNTS, START_TIME,
+    END_TIME, MEMO, ZONE )
+    values (#{id}, #{topicName}, #{broker}, #{inCounts},
+    #{startTime}, #{endTime}, #{memo}, #{zone})
+  </insert>
+
+  <select id="monitor_kuroro_producer_analyse.getHisData" parameterType="com.epocharch.kuroro.monitor.dto.KuroroParam"
+    resultType="java.util.HashMap">
+    select start_time, sum(in_counts) inCounts from monitor_kuroro_producer_analyse
+    where   <![CDATA[START_TIME > #{startTime}]]> and
+    <![CDATA[START_TIME < #{endTime}]]>
+    and topic_name = #{topicName}
+    <if test="broker != null and broker != '' ">
+      AND BROKER = #{broker}
+    </if>
+    group by start_time
+  </select>
+</mapper>
