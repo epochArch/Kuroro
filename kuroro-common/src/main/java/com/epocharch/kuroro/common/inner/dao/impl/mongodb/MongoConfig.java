@@ -27,46 +27,105 @@ import org.slf4j.LoggerFactory;
 public class MongoConfig {
 
   private static final Logger LOG = LoggerFactory.getLogger(MongoConfig.class);
-  private boolean socketKeepAlive;
-  private int socketTimeout;
-  private int connectionsPerHost;
-  private int threadsAllowedToBlockForConnectionMultiplier;
-  private int w;
-  private int wtimeout;
-  private boolean fsync;
-  private int connectTimeout;
-  private int maxWaitTime;
-  private boolean safe;
-  private boolean j;
-  private String userName;
-  private String passWord;
+  private String socketKeepAlive = "socketKeepAlive";
+  private String socketTimeout = "socketTimeout";
+  private String connectionsPerHost = "connectionsPerHost";
+  private String threadsAllowedToBlockForConnectionMultiplier = "threadsAllowedToBlockForConnectionMultiplier";
+  private String w = "w";
+  private String wtimeout = "wtimeout";
+  private String fsync = "fsync";
+  private String connectTimeout = "connectTimeout";
+  private String maxWaitTime = "maxWaitTime";
+  private String safe = "safe";
+  private String j = "j";
+  private String userName = "userName";
+  private String passWord = "passWord";
+  private String slaveOk = "slaveOk";
+
   /*
    * mongodb-driver above 3.x , Sets the server selection timeout in
    * milliseconds, which defines how long the driver will wait for server
    * selection to succeed before throwing an exception. default is 30000ms
    */
-  private int serverSelectionTimeout;
-  private boolean slaveOk;
+  private String serverSelectionTimeout = "serverSelectionTimeout";
 
   public MongoConfig() {
-    socketKeepAlive = true;
-    socketTimeout = 5000;
-    connectionsPerHost = 30;
-    threadsAllowedToBlockForConnectionMultiplier = 50;
-    w = 0;
-    wtimeout = 5000;
-    fsync = false;
-    j = false;
-    connectTimeout = 5000;
-    maxWaitTime = 5000;
-    safe = true;
-    userName = "kuroro";
-    passWord = "kuroro123";
-    serverSelectionTimeout = 2000;
-    setSlaveOk(true);
 
     PropertiesContainer.getInstance().
         loadProperties(InConstants.KURORO_MONGO_PROP, InConstants.KURORO_COMMON_NAMESPACE);
+
+  }
+
+  public boolean isSocketKeepAlive() {
+    return Boolean.parseBoolean(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, socketKeepAlive, "true"));
+  }
+
+  public int getSocketTimeout() {
+    return Integer.parseInt(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, socketTimeout));
+  }
+
+  public int getConnectionsPerHost() {
+    return Integer.parseInt(PropertiesContainer.getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, connectionsPerHost));
+  }
+
+  public int getThreadsAllowedToBlockForConnectionMultiplier() {
+    return Integer.parseInt(PropertiesContainer.getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE,
+        threadsAllowedToBlockForConnectionMultiplier));
+  }
+
+  public int getW() {
+    return Integer.parseInt(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, w));
+  }
+
+  public int getWtimeout() {
+    return Integer.parseInt(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, wtimeout));
+  }
+
+  public boolean isFsync() {
+    return Boolean.parseBoolean(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, fsync));
+  }
+
+  public int getConnectTimeout() {
+    return Integer.parseInt(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, connectTimeout));
+  }
+
+  public int getMaxWaitTime() {
+    return Integer.parseInt(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, maxWaitTime));
+  }
+
+  public boolean isSafe() {
+    return Boolean.parseBoolean(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, safe));
+  }
+
+  public boolean isJ() {
+    return Boolean.parseBoolean(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, j));
+  }
+
+  public String getUserName() {
+    return PropertiesContainer.getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, userName);
+  }
+
+  public String getPassWord() {
+    return PropertiesContainer.getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, passWord);
+  }
+
+  public int getServerSelectionTimeout() {
+    return Integer.parseInt(PropertiesContainer.getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE,
+        String.valueOf(serverSelectionTimeout)));
+  }
+
+  public boolean isSlaveOk() {
+    return Boolean.parseBoolean(PropertiesContainer
+        .getInstance().getPropertyByNameSpace(InConstants.KURORO_COMMON_NAMESPACE, slaveOk));
   }
 
   @SuppressWarnings("rawtypes")
@@ -125,70 +184,6 @@ public class MongoConfig {
         }
       }
     }
-  }
-
-  public boolean isSocketKeepAlive() {
-    return socketKeepAlive;
-  }
-
-  public int getSocketTimeout() {
-    return socketTimeout;
-  }
-
-  public int getConnectionsPerHost() {
-    return connectionsPerHost;
-  }
-
-  public int getThreadsAllowedToBlockForConnectionMultiplier() {
-    return threadsAllowedToBlockForConnectionMultiplier;
-  }
-
-  public int getW() {
-    return w;
-  }
-
-  public int getWtimeout() {
-    return wtimeout;
-  }
-
-  public boolean isFsync() {
-    return fsync;
-  }
-
-  public int getConnectTimeout() {
-    return connectTimeout;
-  }
-
-  public int getMaxWaitTime() {
-    return maxWaitTime;
-  }
-
-  public boolean isSafe() {
-    return safe;
-  }
-
-  public boolean isJ() {
-    return j;
-  }
-
-  public String getUserName() {
-    return userName;
-  }
-
-  public String getPassWord() {
-    return passWord;
-  }
-
-  public int getServerSelectionTimeout() {
-    return serverSelectionTimeout;
-  }
-
-  public boolean isSlaveOk() {
-    return slaveOk;
-  }
-
-  public void setSlaveOk(boolean slaveOk) {
-    this.slaveOk = slaveOk;
   }
 
 }

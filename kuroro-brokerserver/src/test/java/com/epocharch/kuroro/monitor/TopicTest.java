@@ -30,7 +30,7 @@ import org.junit.Test;
 public class TopicTest {
 
   @Test
-  public void createTopic(){
+  public void createAndEditTopic(){
     TopicConfigDataMeta cd = new TopicConfigDataMeta();
     cd.setTopicName("kuroroTest");
     cd.setPoolName("test");
@@ -60,6 +60,19 @@ public class TopicTest {
     }else {
       zkClient.createPersistent(topicRootPath, true);
       zkClient.writeData(topicRootPath, cd);
+    }
+  }
+
+  @Test
+  public void deleteTopic() {
+    String topicName = "test";
+    String topicPath = "/EpochArch/IDC1/Kuroro/Pers/Topic/" + topicName;
+    ZkClient zkClient = KuroroZkUtil.initIDCZk();
+
+    if (zkClient.exists(topicPath)) {
+      zkClient.delete(topicPath);
+    }else {
+      System.out.println("topic path is not exist! please check topic path!");
     }
   }
 

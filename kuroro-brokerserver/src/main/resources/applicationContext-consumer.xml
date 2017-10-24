@@ -3,7 +3,7 @@
   default-autowire="byName"
   xmlns="http://www.springframework.org/schema/beans"
   xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
   <bean class="com.epocharch.kuroro.broker.consumerserver.impl.ConsumerWorkerManager"
     id="consumerWorkerManager">
     <property name="analystService" ref="analystService"/>

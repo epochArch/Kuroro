@@ -66,7 +66,6 @@ public class LeaderServer extends BrokerServer {
             + Constants.ZONE_BROKER_LEADER;
     String localZone = System.getProperty(InternalPropKey.ZONE_LOCALZONE);
     host = SystemUtil.getLocalhostIp();
-        //IPUtil.getFirstNoLoopbackIP4Address();
     hi = new HostInfo(host, Constants.KURORO_LEADER_PORT, 1);
 
     final ServerBootstrap bootstrap = new ServerBootstrap(

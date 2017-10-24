@@ -38,5 +38,16 @@
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-text:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-test:3.2.0.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-webmvc:3.2.0.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-context:3.2.0.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-aop:3.2.0.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-expression:3.2.0.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.springframework:spring-web:3.2.0.RELEASE" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.kubek2k:springockito:1.0.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.8.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.kubek2k:springockito-annotations:1.0.2" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: com.google.guava:guava:14.0.1" level="project" />
   </component>
 </module>
